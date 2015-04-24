@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:jms="http://www.mulesoft.org/schema/mule/jms" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.6.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
+
+   <!--  
+   	1) Declared the http end point  in xml file manually with address. This is a global declaration and is being referred
+   		in actual flow. This is because of achieving one way exchange pattern.
+   	2) JMS has been used for massage transmission.
+   		a) Drag and Drop JMS
+   		b) Add the connector configuration. Select ActiveMQ when prompted
+   		c) Change JMS Spec to 1.1
+   		d) Add the activemq-all-5.5.1.jar file located in ActiveMQ base directory
+   -->
+
+    <http:endpoint exchange-pattern="one-way" doc:name="HttpEndPoint" method="POST" name="HTTP1" address="http://localhost:8081/Base"/>
+    <jms:activemq-connector name="Active_MQ" brokerURL="tcp://localhost:61616" validateConnections="true" doc:name="Active MQ" specification="1.1"/>
+    <flow name="product_registrationFlow">
+       <inbound-endpoint name="HTTPInbound" doc:name="HTTP" ref="HTTP1"/>
+        <byte-array-to-string-transformer doc:name="Byte Array to String"/>
+        <logger message="#['In Message logger' + message.payload ]" level="INFO" doc:name="Logger"/>
+        <jms:outbound-endpoint doc:name="JMS" connector-ref="Active_MQ" queue="Products">
+        </jms:outbound-endpoint>
+    </flow>
+</mule>
