@@ -229,6 +229,10 @@
             <version>${mule.version}</version>
             <scope>provided</scope>
         </dependency>
+        <!--
+        	Active MQ jar files were deployed to local repo and been using here as a dependency 
+        	to avoid run time class not found exceptions.
+        -->
     <dependency>
             <groupId>activeMQ</groupId>
             <artifactId>activemq-all</artifactId>
